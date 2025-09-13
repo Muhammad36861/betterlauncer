@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BetterLauncher — Download</title>
+  <style>
+    body{background:#0b1220;color:#e6eef5;font-family:Inter,system-ui,sans-serif;margin:0;padding:20px;text-align:center}
+    h1{font-size:2rem;margin-bottom:0.5rem}
+    p{color:#9ca3af;margin-bottom:1rem}
+    .btn{background:linear-gradient(90deg,#10b981,#06b6d4);color:white;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600;display:inline-block}
+    #status{margin-top:10px;color:#9ca3af;font-size:0.9rem}
+  </style>
+</head>
+<body>
+  <h1>BetterLauncher</h1>
+  <p>The lightweight Minecraft Java launcher for Android. Always up-to-date.</p>
+  <a id="downloadBtn" class="btn" href="#" target="_blank">Fetching latest version...</a>
+  <div id="status">Checking GitHub for new releases...</div>
+
+  <script>
+    async function fetchLatestRelease(){
+      try{
+        const res = await fetch('https://api.github.com/repos/Muhammad36861/BetterLauncher/releases/latest');
+        if(!res.ok) throw new Error('GitHub API error');
+        const data = await res.json();
+        if(data.assets && data.assets.length > 0){
+          const asset = data.assets.find(a => a.name.endsWith('.zip')) || data.assets[0];
+          document.getElementById('downloadBtn').textContent = `Download ${data.name}`;
+          document.getElementById('downloadBtn').href = asset.browser_download_url;
+          document.getElementById('status').textContent = `Version ${data.tag_name} · Released ${new Date(data.published_at).toLocaleDateString()}`;
+        } else {
+          document.getElementById('downloadBtn').textContent = 'No release assets found';
+          document.getElementById('status').textContent = 'Please check back later.';
+        }
+      } catch(e){
+        document.getElementById('downloadBtn').textContent = 'Failed to load release';
+        document.getElementById('status').textContent = 'Error: ' + e.message;
+      }
+    }
+    fetchLatestRelease();
+  </script>
+</body>
+</html>
